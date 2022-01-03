@@ -1,0 +1,22 @@
+- name: update and configure apache webserver
+  hosts: dbserver
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: update httpd
+      yum:
+       name: httpd
+       state: absent
+
+    - name: remove index.html
+      file:
+        path: /var/www/html/index.html
+        state: absent
+
+    - name: remove httpd service from firewall
+      firewalld:
+         service: http
+         state: disabled
+         permanent: yes
+         immadiate: yes

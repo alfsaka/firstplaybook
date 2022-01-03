@@ -1,0 +1,37 @@
+- name: Install and configure apache webserver
+  hosts: dbserver
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: Install httpd
+      yum:
+       name: httpd
+       state: latest
+
+    - name: create index.html
+      copy:
+        content: "Website created with ansible during July21 lesson on Dec 11 21"
+        dest: /var/www/html/index.html
+        owner: apache
+        group: apache
+        mode: 777
+
+    - name: start and enable httpd service
+      service:
+       name: httpd
+       state: started
+       enabled: yes
+
+    - name: start and enable firewalld
+      systemd:
+       name: firewalld
+       state: started
+       enabled: yes
+
+    - name: allow httpd via firewalld
+      firewalld:
+       service: http
+       permanent: yes
+       immediate: yes
+       state: enabled 
